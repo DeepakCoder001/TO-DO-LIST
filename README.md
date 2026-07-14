@@ -54,7 +54,8 @@ Open the `index.html` file in your web browser.
 ## 🔗 Links
 
 **Live Demo:**  
-to-do-list-deep.netlify.app
+
+https://to-do-list-deep.netlify.app/
 
 **GitHub Repository:**  
 https://github.com/DeepakCoder001/TO-DO-LIST
