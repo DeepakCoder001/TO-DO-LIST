@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Todo List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #999;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        #inp {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        #inp:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #inp::placeholder {
+            color: #ccc;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .clear-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .todo-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .todo-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .todo-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .todo-container::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            animation: slideInItem 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes slideInItem {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        li:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+            transform: translateX(5px);
+        }
+
+        li:hover .delete-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        li span {
+            flex: 1;
+            color: #333;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            opacity: 0.7;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            padding: 0;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #ccc;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            color: #999;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+
+            .clear-btn {
+                width: 100%;
+            }
+
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            li span {
+                margin-bottom: 10px;
+            }
+
+            .delete-btn {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-tasks"></i> Todo List
+            </h1>
+            <p>Stay organized and productive</p>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="inp" placeholder="Add a new task..." autocomplete="off">
+            <div class="btn-group">
+                <button class="add-btn">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+                <button class="clear-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="todo-container">
+            <ul id="todoList">
+                <!-- Todos will be added here -->
+            </ul>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>No tasks yet. Add one to get started!</p>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="completedCount">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const addBtn = document.querySelector(".add-btn");
+        const clearBtn = document.querySelector(".clear-btn");
+        const inp = document.getElementById("inp");
+        const todoList = document.getElementById("todoList");
+        const emptyState = document.getElementById("emptyState");
+        const totalCount = document.getElementById("totalCount");
+        const completedCount = document.getElementById("completedCount");
+
+        // Load todos from localStorage
+        let todos = JSON.parse(localStorage.getItem("todoList_CLASSIC_2024")) || [];
+
+        function saveTodos() {
+            localStorage.setItem("todoList_CLASSIC_2024", JSON.stringify(todos));
+        }
+
+        function updateStats() {
+            totalCount.textContent = todos.length;
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = "";
+            
+            if (todos.length === 0) {
+                emptyState.style.display = "block";
+                updateStats();
+                return;
+            }
+
+            emptyState.style.display = "none";
+
+            todos.forEach((todo, index) => {
+                const li = document.createElement("li");
+                const span = document.createElement("span");
+                const deleteBtn = document.createElement("button");
+
+                span.textContent = todo;
+                deleteBtn.className = "delete-btn";
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+
+                deleteBtn.addEventListener("click", () => {
+                    todos.splice(index, 1);
+                    saveTodos();
+                    renderTodos();
+                });
+
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+
+            updateStats();
+        }
+
+        function addTodo() {
+            if (inp.value.trim().length > 0) {
+                todos.push(inp.value.trim());
+                saveTodos();
+                inp.value = "";
+                renderTodos();
+                inp.focus();
+            } else {
+                inp.style.borderColor = "#ff6b6b";
+                setTimeout(() => {
+                    inp.style.borderColor = "#e0e0e0";
+                }, 500);
+            }
+        }
+
+        addBtn.addEventListener("click", addTodo);
+
+        inp.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                addTodo();
+            }
+        });
+
+        clearBtn.addEventListener("click", () => {
+            if (todos.length > 0 && confirm("Are you sure? This will delete all tasks!")) {
+                todos = [];
+                saveTodos();
+                renderTodos();
+            }
+        });
+
+        // Initial render
+        renderTodos();
+    </script>
+</body>
+</html>
